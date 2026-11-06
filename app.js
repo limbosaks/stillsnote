@@ -4,7 +4,7 @@
 
   var CONFIG = window.STILLSNOTE_CONFIG || {};
   var ENDPOINT = String(CONFIG.endpoint || '');
-  var CONNECTED = /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(ENDPOINT);
+  var CONNECTED = /^https:\/\/script\.google\.com\/(a\/macros\/[^\/]+|macros)\/s\/[^\/]+\/exec$/.test(ENDPOINT.trim());
   var DEMO = /[?&]demo=1\b/.test(location.search);
   var MAX_TAGS = 5;
   var MAX_SIDE = 1568;
@@ -132,7 +132,7 @@
     var body = Object.assign({ action: action, token: state.token }, data || {});
     if (DEMO) return mockApi(action, body);
     if (!CONNECTED) return Promise.reject(new Error('Stillsnote is not connected yet. Add the Web app URL to config.js.'));
-    return fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(body) })
+    return fetch(ENDPOINT.trim(), { method: 'POST', body: JSON.stringify(body) })
       .then(function (res) { return res.json(); })
       .catch(function () { throw new Error('Could not reach Stillsnote. Check your connection and try again.'); })
       .then(function (j) {
